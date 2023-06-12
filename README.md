@@ -26,3 +26,4 @@ quasar build
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
 
 #### Проект для Волгоградского Государственного Технического Университета
+#### *ВолгГТУ (VSTU) project*
