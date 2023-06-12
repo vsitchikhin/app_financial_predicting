@@ -9,6 +9,7 @@ import {
   LoadingStatusCodesEnum,
   NLoadingStatus
 } from "src/modules/neiro/types/neiro.types";
+import axios from "axios";
 
 
 export class NeiroService extends Service {
@@ -44,33 +45,61 @@ export class NeiroService extends Service {
   // ------------------------------------------------------------------
   // API запросы
   // todo: сделать асинхронным
-  public getPrediction(values: IPredictedValues): IPredictedValues {
+  public async getPrediction(values: IPredictedValues): Promise<IPredictedValues> {
     this.store.SET_PREDICTION_LOADING_STATUS({
       code: LoadingStatusCodesEnum.notLoaded,
       action: LoadingStatusActionsEnum.loading,
     });
 
+    console.log(1)
+    console.log(values)
     // todo: API запрос за предсказанием
-    const response = this.responseImitation(values);
+    try {
+      const res = await axios.post('http://127.0.0.1:5000/predict', values)
 
-    if (!response.failure) {
-      this.store.ADD_PREDICTED_VALUES(response.payload);
+      const response = res.data
+
+
+
+      this.store.ADD_PREDICTED_VALUES(response);
 
       this.store.SET_PREDICTION_LOADING_STATUS({
         code: LoadingStatusCodesEnum.loaded,
         action: LoadingStatusActionsEnum.noAction,
       });
 
-      return response.payload;
-    } else {
+      return response;
+
+    } catch (error: axios.AxiosError) {
+      console.log(error)
       this.store.SET_PREDICTION_LOADING_STATUS({
         code: LoadingStatusCodesEnum.error,
         action: LoadingStatusActionsEnum.noAction,
-        errorCode: response.errorCode,
-        msg: response.errorMessage,
+        errorCode: error.code,
+        msg: error.message,
       })
+
+      return {} as IPredictedValues;
     }
   }
+
+  // if (!response.failure) {
+  //   this.store.ADD_PREDICTED_VALUES(response.payload);
+  //
+  //   this.store.SET_PREDICTION_LOADING_STATUS({
+  //     code: LoadingStatusCodesEnum.loaded,
+  //     action: LoadingStatusActionsEnum.noAction,
+  //   });
+  //
+  //   return response.payload;
+  // } else {
+  //   this.store.SET_PREDICTION_LOADING_STATUS({
+  //     code: LoadingStatusCodesEnum.error,
+  //     action: LoadingStatusActionsEnum.noAction,
+  //     errorCode: response.errorCode,
+  //     msg: response.errorMessage,
+  //   })
+  // }
 
   public loadCompaniesList() {
     this.store.SET_COMPANIES_LOADING_STATUS({

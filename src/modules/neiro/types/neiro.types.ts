@@ -11,7 +11,7 @@ export interface IPredictedValues {
   close: number,
   high: number,
   low: number,
-  value: bigint,
+  value: number,
 }
 
 export interface ISavedValues {
@@ -19,7 +19,7 @@ export interface ISavedValues {
   close: number[],
   high: number[],
   low: number[],
-  value: bigint[],
+  value: number[],
 }
 
 export enum LoadingStatusCodesEnum {
