@@ -1,7 +1,9 @@
+import {Ref} from "vue";
+
 export enum CompanyNamesEnum {
-  gasprom = 'gasprom',
-  yandex = 'yandex',
-  vk = 'vk',
+  gasprom = 'Газпром',
+  yandex = 'Yandex',
+  vk = 'VK',
 }
 
 export interface IPredictedValues {
@@ -9,7 +11,7 @@ export interface IPredictedValues {
   close: number,
   high: number,
   low: number,
-  value: number,
+  value: bigint,
 }
 
 export interface ISavedValues {
@@ -17,7 +19,7 @@ export interface ISavedValues {
   close: number[],
   high: number[],
   low: number[],
-  value: number[],
+  value: bigint[],
 }
 
 export enum LoadingStatusCodesEnum {
@@ -45,4 +47,26 @@ export interface IPredictionResponse {
   errorCode: string;
   errorMessage: string;
   payload: IPredictedValues;
+}
+
+export interface ICompaniesResponse {
+  payload: CompanyNamesEnum[],
+  failure: false,
+  errorMessage: '',
+  errorCode: '',
+}
+
+export enum GraphicTypeEnum {
+  multy = 'multy',
+  single = 'single',
+}
+
+export interface ISeries {
+  name: string,
+  data: number[] | bigint[],
+}
+
+export interface IGraphicData {
+  series: Ref<ISeries[]>,
+  categories: Ref<number[]>,
 }

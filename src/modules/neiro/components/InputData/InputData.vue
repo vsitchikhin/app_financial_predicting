@@ -1,5 +1,7 @@
 <script lang="ts">
-import {defineComponent, reactive} from "vue";
+import {computed, defineComponent, ref, watch} from "vue";
+import {CompanyNamesEnum, IPredictedValues} from "src/modules/neiro/types/neiro.types";
+import {NeiroService} from "src/modules/neiro/services/neiro.service";
 
   export default defineComponent({
     props: {
@@ -7,16 +9,65 @@ import {defineComponent, reactive} from "vue";
     },
 
     setup() {
-      const inputData = reactive({
+      const neiroService = new NeiroService();
+
+      // --------------------------------------------------------------
+      // Данные для инпутов
+      const inputData = ref<IPredictedValues>({
         open: 0,
         close: 0,
         high: 0,
         low: 0,
-        val: 0,
+        value: 0n,
       });
+
+      // --------------------------------------------------------------
+      // Данные для списка компаний
+      const currentCompany = ref<CompanyNamesEnum | null>(null);
+      const options = computed(() => neiroService.companiesList);
+
+      // Список доступных компаний загружается непосредственно в момент первого открытия
+      // todo: асинхронность добавить
+      function filterFunction(val, update) {
+        if (options.value !== null && options.value !== undefined) {
+          update();
+          return;
+        }
+
+        update(() => {
+          neiroService.loadCompaniesList()
+        });
+      }
+
+      watch([currentCompany], () => {
+        if (currentCompany.value && confirm('Сменить текущую компанию? Это очистит все полученные значения.')) {
+          neiroService.setCompanyName(currentCompany.value);
+        }
+      });
+
+      function abortFilterFn() {
+        console.log('none');
+      }
+
+      // --------------------------------------------------------------
+      // Методы загрузки данных
+      function onButtonClick() {
+        inputData.value = neiroService.getPrediction({
+          open: Number(inputData.value.open),
+          close: Number(inputData.value.close),
+          high: Number(inputData.value.high),
+          low: Number(inputData.value.low),
+          value: BigInt(inputData.value.value),
+        });
+      }
 
       return {
         inputData,
+        onButtonClick,
+        currentCompany,
+        options,
+        filterFunction,
+        abortFilterFn,
       }
     }
   })
@@ -30,7 +81,26 @@ import {defineComponent, reactive} from "vue";
       <q-input filled v-model="inputData.high" class="input-data__input">HIGH</q-input>
       <q-input filled v-model="inputData.low" class="input-data__input">LOW</q-input>
       <q-input filled v-model="inputData.close" class="input-data__input">CLOSE</q-input>
-      <q-input filled v-model="inputData.val" class="input-data__input">VALUE</q-input>
+      <q-input filled v-model="inputData.value" class="input-data__input">VALUE</q-input>
+      <q-select
+        filled
+        v-model="currentCompany"
+        use-chips
+        label="Выберите компанию"
+        :options="options"
+        @filter="filterFunction"
+        @filter-abort="abortFilterFn"
+        class="input-data__select"
+      >
+        <template v-slot:no-option>
+          <q-item>
+            <q-item-section class="text-grey">
+              No results
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
+      <q-btn color="primary" label="Рассчитать значения" @click="onButtonClick" class="input-data__button" />
     </div>
   </div>
 </template>
@@ -50,20 +120,33 @@ import {defineComponent, reactive} from "vue";
       display: flex;
     }
 
-    &__input {
+    &__button {
+      width: 400px;
+    }
+
+    &__select {
       color: $font;
       background: $main-bg;
-      max-width: 140px;
-      margin-left: 20px;
+      max-width: 240px;
+      width: 100%;
+      margin-right: 20px;
       border: 1px solid $primary;
       border-radius: 8px;
       font-size: 16px;
       line-height: 20px;
       font-weight: 500;
+    }
 
-      &:first-child {
-        margin-left: 0;
-      }
+    &__input {
+      color: $font;
+      background: $main-bg;
+      max-width: 140px;
+      margin-right: 20px;
+      border: 1px solid $primary;
+      border-radius: 8px;
+      font-size: 16px;
+      line-height: 20px;
+      font-weight: 500;
     }
   }
 </style>

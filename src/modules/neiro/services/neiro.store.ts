@@ -19,8 +19,17 @@ export const neiroStore = defineStore({
       errorCode: '',
     } as NLoadingStatus,
 
+    companiesLoadingStatus: {
+      code: LoadingStatusCodesEnum.notLoaded,
+      action: LoadingStatusActionsEnum.noAction,
+      msg: '',
+      errorCode: '',
+    } as NLoadingStatus,
+
     currentCompany: null as CompanyNamesEnum | null,
     predictedValues: null as ISavedValues | null,
+
+    companies: null as CompanyNamesEnum[] | null,
 
   }),
 
@@ -57,6 +66,17 @@ export const neiroStore = defineStore({
         ...this.predictionLoadingStatus,
         ...status,
       }
+    },
+
+    SET_COMPANIES_LOADING_STATUS(status: NLoadingStatus) {
+      this.companiesLoadingStatus = {
+        ...this.companiesLoadingStatus,
+        ...status,
+      }
+    },
+
+    SET_COMPANIES_PAYLOAD(payload: CompanyNamesEnum[] | null) {
+      this.companies = payload;
     }
   },
 })
