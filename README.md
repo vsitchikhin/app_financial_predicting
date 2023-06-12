@@ -1,6 +1,8 @@
-# Quasar App (kurs)
+# Quasar App (financial predicting)
 
-A Quasar Project
+Курсовая работа на тему "прогнозирование цен финансовых инструментов"
+### Приложение является клиентом, который работает с сервером
+
 
 ## Install the dependencies
 ```bash
@@ -22,3 +24,5 @@ quasar build
 
 ### Customize the configuration
 See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
+
+#### Проект для Волгоградского Государственного Технического Университета
