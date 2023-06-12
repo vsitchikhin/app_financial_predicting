@@ -18,7 +18,7 @@ import {NeiroService} from "src/modules/neiro/services/neiro.service";
         close: 0,
         high: 0,
         low: 0,
-        value: 0n,
+        value: 0,
       });
 
       // --------------------------------------------------------------
@@ -51,13 +51,13 @@ import {NeiroService} from "src/modules/neiro/services/neiro.service";
 
       // --------------------------------------------------------------
       // Методы загрузки данных
-      function onButtonClick() {
-        inputData.value = neiroService.getPrediction({
+      async function onButtonClick() {
+        inputData.value = await neiroService.getPrediction({
           open: Number(inputData.value.open),
           close: Number(inputData.value.close),
           high: Number(inputData.value.high),
           low: Number(inputData.value.low),
-          value: BigInt(inputData.value.value),
+          value: Number(inputData.value.value),
         });
       }
 
@@ -81,25 +81,25 @@ import {NeiroService} from "src/modules/neiro/services/neiro.service";
       <q-input filled v-model="inputData.high" class="input-data__input">HIGH</q-input>
       <q-input filled v-model="inputData.low" class="input-data__input">LOW</q-input>
       <q-input filled v-model="inputData.close" class="input-data__input">CLOSE</q-input>
-      <q-input filled v-model="inputData.value" class="input-data__input">VALUE</q-input>
-      <q-select
-        filled
-        v-model="currentCompany"
-        use-chips
-        label="Выберите компанию"
-        :options="options"
-        @filter="filterFunction"
-        @filter-abort="abortFilterFn"
-        class="input-data__select"
-      >
-        <template v-slot:no-option>
-          <q-item>
-            <q-item-section class="text-grey">
-              No results
-            </q-item-section>
-          </q-item>
-        </template>
-      </q-select>
+      <q-input filled v-model="inputData.value" class="input-data__input">VOLUME</q-input>
+<!--      <q-select-->
+<!--        filled-->
+<!--        v-model="currentCompany"-->
+<!--        use-chips-->
+<!--        label="Выберите компанию"-->
+<!--        :options="options"-->
+<!--        @filter="filterFunction"-->
+<!--        @filter-abort="abortFilterFn"-->
+<!--        class="input-data__select"-->
+<!--      >-->
+<!--        <template v-slot:no-option>-->
+<!--          <q-item>-->
+<!--            <q-item-section class="text-grey">-->
+<!--              No results-->
+<!--            </q-item-section>-->
+<!--          </q-item>-->
+<!--        </template>-->
+<!--      </q-select>-->
       <q-btn color="primary" label="Рассчитать значения" @click="onButtonClick" class="input-data__button" />
     </div>
   </div>
